@@ -96,6 +96,9 @@ public class LSPatch {
     @Parameter(names = {"-m", "--embed"}, description = "Embed provided modules to apk")
     private List<String> modules = new ArrayList<>();
 
+    @Parameter(names = {"-p", "--package"}, description = "Rename package for apk")
+    private String overridePackage = "";
+
     private static final String ANDROID_MANIFEST_XML = "AndroidManifest.xml";
     private static final HashSet<String> ARCHES = new HashSet<>(Arrays.asList(
             "armeabi-v7a",
@@ -351,6 +354,8 @@ public class LSPatch {
             property.addManifestAttribute(new AttributeItem(NodeValue.Manifest.VERSION_CODE, 1));
         if (minSdkVersion < 28)
             property.addUsesSdkAttribute(new AttributeItem(NodeValue.UsesSDK.MIN_SDK_VERSION, 28));
+        if (!overridePackage.isEmpty())
+            property.addManifestAttribute(new AttributeItem(NodeValue.Manifest.PACKAGE, overridePackage));
         property.addApplicationAttribute(new AttributeItem(NodeValue.Application.DEBUGGABLE, debuggableFlag));
         property.addApplicationAttribute(new AttributeItem("appComponentFactory", PROXY_APP_COMPONENT_FACTORY));
         property.addMetaData(new ModificationProperty.MetaData("lspatch", metadata));
